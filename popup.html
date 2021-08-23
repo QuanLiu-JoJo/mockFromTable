@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>mockFromTable</title>
+    <link rel="stylesheet" type="text/css" href="main.css" />
+    <!-- 包含头部信息用于适应不同设备 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- 包含 bootstrap 样式表 -->
+    <link
+      rel="stylesheet"
+      href="https://apps.bdimg.com/libs/bootstrap/3.2.0/css/bootstrap.min.css"
+    />
+  </head>
+  <body>
+    <div class="container">
+      <div class="input">
+        <div class="tip">元素选择器：</div>
+        <input id="selector" type="text" value="body > table" />
+      </div>
+      <div class="input">
+        <div class="tip">元素个数：</div>
+        <input id="eleNum" type="text" value="2" />
+      </div>
+      <div class="input">
+        <div class="tip">开始行：</div>
+        <input id="startRow" type="text" value="1" />
+      </div>
+      <div class="input">
+        <div class="tip">属性列：</div>
+        <input id="keyCol" type="text" value="0" />
+      </div>
+      <div class="input">
+        <div class="tip">类型列：</div>
+        <input id="typeCol" type="text" value="1" />
+      </div>
+      <div class="input">
+        <div class="tip">函数名：</div>
+        <input id="fnName" type="text" value="GET" />
+      </div>
+      <div class="bt">
+        <input
+          class="btn btn-primary"
+          type="button"
+          id="generateButton"
+          value="生成mock函数"
+        />
+        <input id="copyRes" class="btn" type="button" value="复制结果" />
+      </div>
+      <div>
+        <textarea name="output" id="out" cols="100" rows="30"></textarea>
+      </div>
+    </div>
+    <script src="popup.js"></script>
+  </body>
+</html>

@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>mockData</title>
+    <!-- 包含头部信息用于适应不同设备 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- 包含 bootstrap 样式表 -->
+    <link
+      rel="stylesheet"
+      href="https://apps.bdimg.com/libs/bootstrap/3.2.0/css/bootstrap.min.css"
+    />
+  </head>
+  <style>
+    body {
+      margin-left: 10px;
+    }
+    #selector {
+      width: 300px;
+    }
+    .inputSeg {
+      display: inline-block;
+    }
+    #eleNum,
+    #fnName,
+    #out {
+      margin: 10px 0px;
+    }
+    #eleNum,
+    #fnName {
+      width: 100px;
+    }
+    .tip {
+      display: inline-block;
+      width: 90px;
+      text-align: right;
+    }
+  </style>
+  <body>
+    <table border="1">
+      <tr>
+        <td>字段</td>
+        <td>类型</td>
+      </tr>
+      <tr>
+        <td>key</td>
+        <td>string</td>
+      </tr>
+      <tr>
+        <td>value1</td>
+        <td>number</td>
+      </tr>
+      <tr>
+        <td>value2</td>
+        <td>double</td>
+      </tr>
+    </table>
+    <div>
+      <div class="tip">元素选择器：</div>
+      <input id="selector" type="text" value="body > table" />
+    </div>
+    <div class="inputSeg">
+      <div class="tip">元素个数：</div>
+      <input id="eleNum" type="text" value="2" />
+    </div>
+    <div class="inputSeg">
+      <div class="tip">函数名：</div>
+      <input id="fnName" type="text" value="GET" />
+    </div>
+    <div>
+      <input
+        class="btn btn-primary"
+        type="button"
+        value="生成mock函数"
+        onclick="generate()"
+      />
+      <input id="copyRes" class="btn" type="button" value="复制结果" />
+    </div>
+    <div>
+      <textarea name="output" id="out" cols="100" rows="30"></textarea>
+    </div>
+  </body>
+  <script>
+    document.querySelector("#copyRes").addEventListener("click", async (e) => {
+      await navigator.clipboard.writeText(document.querySelector("#out").value);
+    });
+
+    //数据模拟，输入表格元素的选择器
+    function mockFromTable(
+      tableSlector,
+      res_arr = 0, // 是否生成数组数据，默认0则生成对象数据，非零时该值为数组个数
+      startRow = 1,
+      keyCol = 0,
+      typeCol = 1
+    ) {
+      let tableEle = document.querySelector(tableSlector);
+      let dataArr = getTableContent(tableEle);
+      let res = res_arr === 0 ? {} : [];
+      if (res_arr === 0) {
+        for (let i = startRow, len = dataArr.length; i < len; i++) {
+          let value =
+            dataArr[i][typeCol] === "string"
+              ? "demo_string" + Math.random().toFixed(3) * 1e3
+              : Math.random().toFixed(6) * 1e6;
+          res[dataArr[i][keyCol]] = value;
+        }
+      } else {
+        for (let t = 0; t < res_arr; t++) {
+          let temp = {};
+          for (let i = startRow, len = dataArr.length; i < len; i++) {
+            let value;
+            switch (dataArr[i][typeCol]) {
+              case "string":
+                value = "demo_string_" + Math.random().toFixed(3) * 1e3;
+                break;
+              case "double":
+                value = Math.random().toFixed(6);
+                break;
+              default:
+                value = Math.random().toFixed(6) * 1e6;
+            }
+            temp[dataArr[i][keyCol]] = value;
+          }
+          res.push(temp);
+        }
+      }
+      return JSON.stringify(res);
+    }
+
+    function getTableContent(tableEle) {
+      let data = [];
+      for (var i = 0, rows = tableEle.rows.length; i < rows; i++) {
+        for (var j = 0, cells = tableEle.rows[i].cells.length; j < cells; j++) {
+          if (!data[i]) {
+            data[i] = new Array();
+          }
+          data[i][j] = getValue(tableEle.rows[i].cells[j]);
+        }
+      }
+      return data;
+    }
+
+    function getValue(ele) {
+      while (ele.firstChild != null) {
+        ele = ele.firstChild;
+      }
+      return ele.data;
+    }
+
+    function generate() {
+      let selector = document.querySelector("#selector").value;
+      let num = parseInt(document.querySelector("#eleNum").value);
+      let fnName = document.querySelector("#fnName").value;
+      let res = mockFromTable(selector, num);
+      out.value = `export const ${fnName} = (params: any) => {
+  return Promise.resolve(
+      ${res}
+  );
+};`;
+    }
+  </script>
+</html>
